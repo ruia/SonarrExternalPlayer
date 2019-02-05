@@ -1,6 +1,6 @@
 # SonarrExternalPlayer
 
-Sonarr web interface modification using a button and a external app running on the host to allow playing files directly fom the interface.
+Sonarr web interface modification using a button and a external app running on the host to play files directly fom the interface using the default Windows media player.
 Uses the [External Agent](https://github.com/Kayomani/PlexExternalPlayer) from [Kayomani](https://github.com/Kayomani) and the script itself is based on his script also.
 
 ### Installation
