@@ -1,26 +1,26 @@
 // ==UserScript==
 // @name         SonarrExternalPlayer
-// @version      0.1
+// @version      0.2
 // @author       ruia
 // @include     /^https?://.*:8989.*
 // @include     http://*:8989*
 // @include     https://*:8989l*
 // @require     http://code.jquery.com/jquery-3.2.1.min.js
-// @connect     *
 // @require     https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js
+// @connect     http://localhost:7251/
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
-var AbreExterno = function(e) {
-    //alert('teste');
-    var ficheiro = jQuery(".EpisodeSummary-fileRow-3brC7").children().first().text();
-    var url = 'http://localhost:7251/?protocol=2&item=' + encodeURIComponent(ficheiro);
+
+var OpenExternalPlayer = function(e) {
+    var filename = e.data.filename
+    var url = 'http://localhost:7251/?protocol=2&item=' + encodeURIComponent(filename);
     return new Promise(function (resolve, reject) {
         GM_xmlhttpRequest({
             method: "GET",
             url: url,
             onload: function(state){
                 if (state.status === 200) {
-                      logMessage('Called sucessfully to ' + url);
+                    logMessage('Called sucessfully to ' + url);
                     resolve(state);
                 }
             },
@@ -32,7 +32,7 @@ var AbreExterno = function(e) {
                         logMessage('Not Authorised ' + url);
                         onError();
                     } else if (state.status !== 200) {
-                     logMessage('Request returned ' + state.status);
+                        logMessage('Request returned ' + state.status);
                         showToast('Error calling: ' + url + '. Response: ' + state.responseText + ' Code:' + state.status + ' Message: ' + state.statusText, 1);
                     }
                 }
@@ -41,19 +41,27 @@ var AbreExterno = function(e) {
     });
 }
 
+var logMessage = function(msg){
+    console.log('[Plex External] ' + msg);
+};
+
 var bindClicks = function() {
     var hasBtn = false;
-    var toolBar= jQuery(".ModalFooter-modalFooter-3izCM");
-    toolBar.children('a').each(function(i, e) {
-        if(jQuery(e).hasClass('EpisodeDetailsModalContent-openSeriesButton-3PQ7c Button-button-3GUER Link-link-VNquX Button-default-1X0nf Button-medium-1tLpg Link-link-VNquX Link-to-1jNxQ externo'))
-            hasBtn = true;
-    });
+    var table = jQuery(".episode-file-info");
+    var tableHeader = table.find("thead tr");
+    var tableBody = table.find("tbody");
 
-    if(!hasBtn)
-    {
-        var template = jQuery('<a class="EpisodeDetailsModalContent-openSeriesButton-3PQ7c Button-button-3GUER Link-link-VNquX Button-default-1X0nf Button-medium-1tLpg Link-link-VNquX Link-to-1jNxQ externo" href="#">Abrir Extertno</a>');
-        toolBar.prepend(template);
-        template.click(AbreExterno);
+    if (tableHeader.children().first().text() == "Play") {
+        hasBtn = true;
+    }
+
+    if(!hasBtn) {
+        tableHeader.prepend("<th>Play</th>");
+
+        tableBody.children('tr').each(function(i, e) {
+            jQuery(e).prepend('<td><button><i class="icon-sonarr-active"><i></button></td>');
+            jQuery(e).click({filename: e.children[1].innerText, }, OpenExternalPlayer);
+        });
     }
 };
 
