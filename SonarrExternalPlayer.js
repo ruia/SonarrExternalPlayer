@@ -8,6 +8,7 @@
 // @require     http://code.jquery.com/jquery-3.2.1.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js
 // @connect     http://localhost:7251/
+// @connect     localhost
 // @grant       GM_xmlhttpRequest
 // ==/UserScript==
 
