@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SonarrExternalPlayer
-// @version      0.3
+// @version      0.4
 // @author       ruia
 // @include     /^https?://.*:8989.*
 // @include     http://*:8989*
@@ -72,19 +72,22 @@ var bindClicks = function() {
             });
         }
     } else {
-        var filesHeader = jQuery('[class^="EpisodeSummary/filesHeader/"]');
-        var filesBody = jQuery('[class^="EpisodeSummary/fileRow/"]');
+        //var table3 = jQuery('[class^="Table-table-1Ion0"]').first();
+        var table3 = jQuery('[class^="EpisodeDetailsModalContent-tabContent-BNRPM"]').find("table");
+        var table3Header = table3.find("thead tr");
+        var table3Body = table3.find("tbody");
 
-        if (filesHeader.children().first().text() == "Play") {
+        if (table3Header.children().first().text() == "Play") {
             hasBtn = true;
         }
 
         if(!hasBtn) {
-            filesHeader.prepend('<div style="flex: 0 0 40px">Play</div>');
-            filesBody.each(function(i, e) {
-                jQuery(e).prepend('<div style="flex: 0 0 40px"><a style="color: inherit" href="#"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play fa-w-14 Icon/default/3C-KJ" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="font-size: 14px;"><path fill="currentColor" d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg></a></div>');
+            table3Header.prepend("<th>Play</th>");
+            table3Body.children("tr").each(function(i, e) {
+                jQuery(e).prepend('<td class="TableRowCell-cell-1CLnf"><button><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play fa-w-14 Icon/default/3C-KJ" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="font-size: 14px;"><path fill="currentColor" d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg></button></td>');
                 jQuery(e).click({filename: e.children[1].innerText, }, OpenExternalPlayer);
             });
+
         }
     }
 };
